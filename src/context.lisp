@@ -76,7 +76,9 @@
 (cffi:defcallback verify-peer-callback :int ((ok :int) (ctx :pointer))
   (let ((error-code (x509-store-ctx-get-error ctx)))
     (unless (= error-code 0)
-      (error 'ssl-error-verify  :error-code error-code))
+      (restart-case 
+	        (error 'ssl-error-verify  :error-code error-code)
+        (continue () ok)))
     ok))
 
 (defun make-context (&key (method nil method-supplied-p)
